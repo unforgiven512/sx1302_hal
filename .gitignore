@@ -1,6 +1,19 @@
+#
+# .gitignore
+#
+
+## BACKUP & TEMPORARY FILES ##
+
+*~
+*.bak
+*.tmp
+*.swp
+
+
+## OBJECT FILES & BUILD ARTIFACTS ##
+
 */*.a
 */obj/
-*.swp
 bin/
 libloragw/inc/config.h
 libloragw/test_loragw_*
