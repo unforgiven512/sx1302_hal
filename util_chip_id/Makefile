@@ -42,8 +42,9 @@ LIB_PATH := ../libloragw
 
 ### Expand build options
 CFLAGS := -std=c99 $(WARN_CFLAGS) $(OPT_CFLAGS) $(DEBUG_CFLAGS)
-CC := $(CROSS_COMPILE)gcc
-AR := $(CROSS_COMPILE)ar
+CC ?= $(CROSS_COMPILE)gcc
+CXX ?= $(CROSS_COMPILE)g++
+AR ?= $(CROSS_COMPILE)ar
 
 ### General build targets
 all: $(APP_NAME)
@@ -68,6 +69,10 @@ ifneq ($(strip $(TARGET_IP)),)
 else
 	@echo "ERROR: TARGET_IP is not configured in target.cfg"
 endif
+
+install-local:
+	install -d $(TARGET_DIR)
+	install -m 755 chip_id $(TARGET_DIR)
 
 $(OBJDIR):
 	mkdir -p $(OBJDIR)

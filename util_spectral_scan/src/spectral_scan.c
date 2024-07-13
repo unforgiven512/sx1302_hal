@@ -49,8 +49,8 @@ License: Revised BSD License, see LICENSE.TXT file include in the project
 
 #define DEFAULT_CLK_SRC     0
 #define DEFAULT_RADIO_TYPE  LGW_RADIO_TYPE_SX1250
-#define DEFAULT_FREQ_HZ     863100000U
-#define DEFAULT_NB_CHAN     35
+#define DEFAULT_FREQ_HZ     902100000U
+#define DEFAULT_NB_CHAN     130
 #define DEFAULT_NB_SCAN     2000
 #define DEFAULT_RSSI_OFFSET -11 /* RSSI offset of SX1261 */
 

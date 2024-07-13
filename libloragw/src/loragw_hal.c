@@ -1093,6 +1093,7 @@ int lgw_start(void) {
     dbg_init_random();
 
     if (CONTEXT_COM_TYPE == LGW_COM_SPI) {
+#if (!defined(HAL_DISABLE_TEMP_SENSOR) || (defined(HAL_DISABLE_TEMP_SENSOR) && (HAL_DISABLE_TEMP_SENSOR == 0)))
         /* Find the temperature sensor on the known supported ports */
         for (i = 0; i < (int)(sizeof I2C_PORT_TEMP_SENSOR); i++) {
             ts_addr = I2C_PORT_TEMP_SENSOR[i];
@@ -1116,6 +1117,7 @@ int lgw_start(void) {
             printf("ERROR: no temperature sensor found.\n");
             return LGW_HAL_ERROR;
         }
+#endif
 
         /* Configure ADC AD338R for full duplex (CN490 reference design) */
         if (CONTEXT_BOARD.full_duplex == true) {
@@ -1222,13 +1224,14 @@ int lgw_stop(void) {
     }
 
     if (CONTEXT_COM_TYPE == LGW_COM_SPI) {
+#if (!defined(HAL_DISABLE_TEMP_SENSOR) || (defined(HAL_DISABLE_TEMP_SENSOR) && (HAL_DISABLE_TEMP_SENSOR == 0)))
         DEBUG_MSG("INFO: Closing I2C for temperature sensor\n");
         x = i2c_linuxdev_close(ts_fd);
         if (x != 0) {
             printf("ERROR: failed to close I2C temperature sensor device (err=%i)\n", x);
             err = LGW_HAL_ERROR;
         }
-
+#endif
         if (CONTEXT_BOARD.full_duplex == true) {
             DEBUG_MSG("INFO: Closing I2C for AD5338R\n");
             x = i2c_linuxdev_close(ad_fd);

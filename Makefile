@@ -2,7 +2,10 @@
 
 ARCH ?=
 CROSS_COMPILE ?=
+CC ?= $(CROSS_COMPILE)gcc
+CXX ?= $(CROSS_COMPILE)g++
 export
+
 
 ### general build targets
 
@@ -48,7 +51,18 @@ install:
 	$(MAKE) install -e -C util_boot
 	$(MAKE) install -e -C util_spectral_scan
 
+install-local:
+	$(MAKE) install-local -e -C libloragw
+	$(MAKE) install-local -e -C packet_forwarder
+	$(MAKE) install-local -e -C util_net_downlink
+	$(MAKE) install-local -e -C util_chip_id
+	$(MAKE) install-local -e -C util_boot
+	$(MAKE) install-local -e -C util_spectral_scan
+
 install_conf:
 	$(MAKE) install_conf -e -C packet_forwarder
+
+install-local-conf:
+	$(MAKE) install-local-conf -e -C packet_forwarder
 
 ### EOF

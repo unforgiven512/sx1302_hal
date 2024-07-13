@@ -2,18 +2,22 @@
 
 include ../../target.cfg
 
+
 ### constant symbols
 
 ARCH ?=
 CROSS_COMPILE ?=
-CC := $(CROSS_COMPILE)gcc
-AR := $(CROSS_COMPILE)ar
+CC ?= $(CROSS_COMPILE)gcc
+CXX ?= $(CROSS_COMPILE)g++
+AR ?= $(CROSS_COMPILE)ar
 
 CFLAGS := -O2 -Wall -Wextra -std=c99 -I. -I../../libtools/inc
+
 
 ### linking options
 
 LIBS := -ltinymt32
+
 
 ### general build targets
 
@@ -42,10 +46,16 @@ else
 	@echo "ERROR: TARGET_IP is not configured in target.cfg"
 endif
 
+install-local:
+	install -d $(TARGET_DIR)
+	install -m 755 payload_diff payload_crc payload_gen $(TARGET_DIR)
+
+
 ### rules
 
 %.o : %.c
 	$(CC) -c $(CFLAGS) $< -o $@
+
 
 ### test programs
 

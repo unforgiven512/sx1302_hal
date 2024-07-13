@@ -8,10 +8,20 @@ include ../target.cfg
 
 ARCH ?=
 CROSS_COMPILE ?=
-CC := $(CROSS_COMPILE)gcc
-AR := $(CROSS_COMPILE)ar
+CC      ?= $(CROSS_COMPILE)gcc
+CXX     ?= $(CROSS_COMPILE)g++
+AR      ?= $(CROSS_COMPILE)ar
+LD      ?= $(CROSS_CONPILE)ld
+AS      ?= $(CROSS_COMPILE)as
+OBJCOPY ?= $(CROSS_COMPILE)objcopy
+OBJDUMP ?= $(CROSS_COMPILE)objdump
+NM      ?= $(CROSS_COMPILE)nm
+SIZE    ?= $(CROSS_COMPILE)size
 
-CFLAGS := -O2 -Wall -Wextra -std=c99 -Iinc -I. -I../libtools/inc
+
+DEFINES := -DHAL_DISABLE_TEMP_SENSOR=0
+
+CFLAGS := -O2 -Wall -Wextra -std=c99 $(DEFINES) -Iinc -I. -I../libtools/inc
 
 OBJDIR = obj
 INCLUDES = $(wildcard inc/*.h) $(wildcard ../libtools/inc/*.h)
@@ -60,6 +70,11 @@ ifneq ($(strip $(TARGET_IP)),)
 else
 	@echo "ERROR: TARGET_IP is not configured in target.cfg"
 endif
+
+install-local:
+	install -d $(TARGET_DIR)
+	install -m 755 test_loragw_* $(TARGET_DIR)
+	install -m 755 ../tools/reset_lgw.sh $(TARGET_DIR)
 
 ### transpose library.cfg into a C header file : config.h
 

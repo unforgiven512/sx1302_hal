@@ -2,9 +2,11 @@
 
 include ../target.cfg
 
+
 ### Application-specific constants
 
 APP_NAME := lora_pkt_fwd
+
 
 ### Environment constants
 
@@ -16,6 +18,7 @@ CROSS_COMPILE ?=
 OBJDIR = obj
 INCLUDES = $(wildcard inc/*.h)
 
+
 ### External constant definitions
 # must get library build option to know if mpsse must be linked or not
 
@@ -24,11 +27,13 @@ RELEASE_VERSION := `cat ../VERSION`
 
 ### Constant symbols
 
-CC := $(CROSS_COMPILE)gcc
+CC ?= $(CROSS_COMPILE)gcc
+CXX ?= $(CROSS_COMPILE)g++
 AR := $(CROSS_COMPILE)ar
 
 CFLAGS := -O2 -Wall -Wextra -std=c99 -Iinc -I. -I../libtools/inc
 VFLAG := -D VERSION_STRING="\"$(RELEASE_VERSION)\""
+
 
 ### Constants for Lora concentrator HAL library
 # List the library sub-modules that are used by the application
@@ -40,9 +45,11 @@ ifneq ($(wildcard $(LGW_PATH)/inc/config.h),)
 endif
 LGW_INC += $(LGW_PATH)/inc/loragw_hal.h
 
+
 ### Linking options
 
 LIBS := -lloragw -ltinymt32 -lparson -lbase64 -lrt -lpthread -lm
+
 
 ### General build targets
 
@@ -74,6 +81,16 @@ install_conf:
 else
 	@echo "ERROR: TARGET_IP is not configured in target.cfg"
 endif
+
+install-local:
+	install -d $(TARGET_DIR)
+	install -m 755 lora_pkt_fwd $(TARGET_DIR)
+
+install-local-conf:
+	install -d $(TARGET_DIR)
+	install -m 644 global_conf.json.sx1250.* $(TARGET_DIR)
+	install -m 644 global_conf.json.sx1255.* $(TARGET_DIR)
+	install -m 644 global_conf.json.sx1257.* $(TARGET_DIR)
 
 ### Sub-modules compilation
 
