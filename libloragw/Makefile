@@ -52,6 +52,7 @@ clean:
 	rm -f test_loragw_*
 	rm -f $(OBJDIR)/*.o
 	rm -f inc/config.h
+	rm -f ../tools/reset_lgw.sh
 
 install:
 ifneq ($(strip $(TARGET_IP)),)
@@ -74,7 +75,10 @@ endif
 install-local:
 	install -d $(TARGET_DIR)
 	install -m 755 test_loragw_* $(TARGET_DIR)
+	@sed 's~@@TARGET_DIR@@~'$(TARGET_DIR)'~' ../tools/reset_lgw.sh.in > ../tools/reset_lgw.sh
 	install -m 755 ../tools/reset_lgw.sh $(TARGET_DIR)
+	install -m 644 ../tools/lgw_gpio.cfg.sample $(TARGET_DIR)
+
 
 ### transpose library.cfg into a C header file : config.h
 

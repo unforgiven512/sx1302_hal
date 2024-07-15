@@ -11,13 +11,9 @@
 
 
 #
-# GPIO mapping has to be adapted with HW
+# Source GPIO mapping from ./lgw_gpio.cfg
 #
-
-SX1302_RESET_PIN=425 # 23     # SX1302 reset
-SX1302_POWER_EN_PIN=424 # 18  # SX1302 power enable
-SX1261_RESET_PIN=422 # 22     # SX1261 reset (LBT / Spectral Scan)
-AD5338R_RESET_PIN=486 # 13    # AD5338R reset (full-duplex CN490 reference design)
+. @@TARGET_DIR@@/lgw_gpio.cfg
 
 
 
