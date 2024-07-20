@@ -23,3 +23,9 @@ util_net_downlink/net_downlink
 util_boot/boot
 util_spectral_scan/spectral_scan
 tools/reset_lgw.sh
+tools/payload_tools/payload_crc
+tools/payload_tools/payload_diff
+tools/payload_tools/payload_gen
+tools/payload_tools/*.o
+tools/systemd/lora_pkt_fwd.service.in2
+tools/systemd/lora_pkt_fwd.service.out
