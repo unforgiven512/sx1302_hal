@@ -8,15 +8,18 @@
 How to auto-start the with systemd
 ==================================
 
-## Create a new systemd service
+## Create a new systemd service ##
 
-Update the lora_pkt_fwd.service file with proper paths and options, then
+Update the `lora_pkt_fwd.service` file with proper paths and options, then
 
 ```console
 sudo cp lora_pkt_fwd.service /etc/systemd/system
 ```
 
-### Enable the service for autostart with
+
+### Enable the service for autostart with ###
+
+To enable the service for autostart on next system boot:
 
 ```console
 sudo systemctl daemon-reload
@@ -24,7 +27,15 @@ sudo systemctl enable lora_pkt_fwd.service
 sudo reboot
 ```
 
-### The following commands to disable the service, manually start/stop it:
+To enable the service for autostart on next system boot, as well as immediately start the service:
+
+```console
+sudo systemctl daemon-reload
+sudo systemctl enable --now lora_pkt_fwd.service
+```
+
+
+### The following commands to disable the service, manually start/stop it: ###
 
 ```console
 sudo systemctl disable lora_pkt_fwd.service
@@ -38,20 +49,23 @@ sudo systemctl start lora_pkt_fwd.service
 sudo systemctl stop lora_pkt_fwd.service
 ```
 
-## Configure rsyslog to redirect the packet forwarder logs into a dedicated file
+
+## (DEPRECATED) Configure rsyslog to redirect the packet forwarder logs into a dedicated file ##
 
 ```console
 sudo cp lora_pkt_fwd.conf /etc/rsyslog.d
 sudo systemctl restart rsyslog
 ```
 
-### See the logs
+### See the logs ###
+
+To view the logs from the **systemd journal**:
 
 ```console
 sudo journalctl -u lora_pkt_fwd -f
 ```
 
-or
+or, to view the logs written by the `rsyslog` daemon _(**NOTE**: this method is deprecated)_:
 
 ```console
 cat /var/log/lora_pkt_fwd.log

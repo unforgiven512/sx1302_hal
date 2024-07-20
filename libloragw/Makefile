@@ -4,6 +4,7 @@ LIBLORAGW_VERSION := `cat ../VERSION`
 include library.cfg
 include ../target.cfg
 
+
 ### constant symbols
 
 ARCH ?=
@@ -17,18 +18,36 @@ OBJCOPY ?= $(CROSS_COMPILE)objcopy
 OBJDUMP ?= $(CROSS_COMPILE)objdump
 NM      ?= $(CROSS_COMPILE)nm
 SIZE    ?= $(CROSS_COMPILE)size
+ECHO    ?= echo
+INSTALL ?= install
+MKDIR   ?= mkdir
+CP      ?= cp
+MV      ?= mv
+RM      ?= rm
 
+
+OPTLVL ?= 2
+DBGLVL ?= 0
+CSTD   ?= gnu11
+CXXSTD ?= gnu++14
+
+
+INCDIRS := -Iinc -I. -I../libtools/inc
 
 DEFINES := -DHAL_DISABLE_TEMP_SENSOR=0
+PROJECT_DEFINES ?=
 
-CFLAGS := -O2 -Wall -Wextra -std=c99 $(DEFINES) -Iinc -I. -I../libtools/inc
+CFLAGS := -O$(OPTLVL) -g$(DBGLVL) -Wall -Wextra -std=$(CSTD) $(DEFINES) $(PROJECT_DEFINES) $(INCDIRS)
+CXXFLAGS := -O$(OPTLVL) -g$(DBGLVL) -Wall -Wextra -std=$(CXXSTD) $(DEFINES) $(PROJECT_DEFINES) $(INCDIRS)
 
-OBJDIR = obj
-INCLUDES = $(wildcard inc/*.h) $(wildcard ../libtools/inc/*.h)
+OBJDIR := obj
+INCLUDES := $(wildcard inc/*.h) $(wildcard ../libtools/inc/*.h)
+
 
 ### linking options
 
 LIBS := -lloragw -ltinymt32 -lrt -lm
+
 
 ### general build targets
 
@@ -58,64 +77,70 @@ install:
 ifneq ($(strip $(TARGET_IP)),)
  ifneq ($(strip $(TARGET_DIR)),)
   ifneq ($(strip $(TARGET_USR)),)
-	@echo "---- Copying libloragw files to $(TARGET_IP):$(TARGET_DIR)"
+	$(ECHO) "---- Copying libloragw files to $(TARGET_IP):$(TARGET_DIR)"
 	@ssh $(TARGET_USR)@$(TARGET_IP) "mkdir -p $(TARGET_DIR)"
 	@scp test_loragw_* $(TARGET_USR)@$(TARGET_IP):$(TARGET_DIR)
 	@scp ../tools/reset_lgw.sh $(TARGET_USR)@$(TARGET_IP):$(TARGET_DIR)
   else
-	@echo "ERROR: TARGET_USR is not configured in target.cfg"
+	$(ECHO) "ERROR: TARGET_USR is not configured in target.cfg"
   endif
  else
-	@echo "ERROR: TARGET_DIR is not configured in target.cfg"
+	$(ECHO) "ERROR: TARGET_DIR is not configured in target.cfg"
  endif
 else
-	@echo "ERROR: TARGET_IP is not configured in target.cfg"
+	$(ECHO) "ERROR: TARGET_IP is not configured in target.cfg"
 endif
 
 install-local:
-	install -d $(TARGET_DIR)
-	install -m 755 test_loragw_* $(TARGET_DIR)
-	@sed 's~@@TARGET_DIR@@~'$(TARGET_DIR)'~' ../tools/reset_lgw.sh.in > ../tools/reset_lgw.sh
-	install -m 755 ../tools/reset_lgw.sh $(TARGET_DIR)
-	install -m 644 ../tools/lgw_gpio.cfg.sample $(TARGET_DIR)
+	$(INSTALL) -d $(LOCAL_TARGET_DIR)
+	$(INSTALL) -d $(LOCAL_CONFIG_DIR)
+	$(INSTALL) -m 755 test_loragw_* $(LOCAL_TARGET_DIR)
+	@sed 's~@@TARGET_DIR@@~'$(LOCAL_TARGET_DIR)'~' ../tools/reset_lgw.sh.in > ../tools/reset_lgw.sh
+	$(INSTALL) -m 755 ../tools/reset_lgw.sh $(LOCAL_TARGET_DIR)
+	$(INSTALL) -m 644 ../tools/lgw_gpio.cfg.sample $(LOCAL_CONFIG_DIR)
+	#$(INSTALL) -m 644 ../tools/lgw_gpio.cfg.sample $(LOCAL_CONFIG_DIR)/lgw_gpio.cfg
+	@ln -sf $(LOCAL_CONFIG_DIR)/lgw_gpio.cfg $(LOCAL_TARGET_DIR)/lgw_gpio.cfg
+	$(ECHO) "---[ Copy $(LOCAL_CONFIG_DIR)/lgw_gpio.cfg.sample to lgw_gpio.cfg and edit as needed ]---"
 
 
 ### transpose library.cfg into a C header file : config.h
 
 inc/config.h: ../VERSION library.cfg
-	@echo "*** Checking libloragw library configuration ***"
-	@rm -f $@
-	#File initialization
-	@echo "#ifndef _LORAGW_CONFIGURATION_H" >> $@
-	@echo "#define _LORAGW_CONFIGURATION_H" >> $@
+	$(ECHO) "*** Checking libloragw library configuration ***"
+	$(RM) -f $@
+	# File initialization
+	$(ECHO) "#ifndef LORAGW_CONFIGURATION_H_" >> $@
+	$(ECHO) "#define LORAGW_CONFIGURATION_H_\n\n" >> $@
 	# Release version
-	@echo "Release version   : $(LIBLORAGW_VERSION)"
-	@echo "	#define LIBLORAGW_VERSION	"\"$(LIBLORAGW_VERSION)\""" >> $@
+	$(ECHO) "Release version   : $(LIBLORAGW_VERSION)"
+	$(ECHO) "#define LIBLORAGW_VERSION	"\"$(LIBLORAGW_VERSION)\""" >> $@
 	# Debug options
-	@echo "	#define DEBUG_AUX		$(DEBUG_AUX)" >> $@
-	@echo "	#define DEBUG_COM		$(DEBUG_COM)" >> $@
-	@echo "	#define DEBUG_MCU		$(DEBUG_MCU)" >> $@
-	@echo "	#define DEBUG_I2C		$(DEBUG_I2C)" >> $@
-	@echo "	#define DEBUG_REG		$(DEBUG_REG)" >> $@
-	@echo "	#define DEBUG_HAL		$(DEBUG_HAL)" >> $@
-	@echo "	#define DEBUG_GPS		$(DEBUG_GPS)" >> $@
-	@echo "	#define DEBUG_GPIO		$(DEBUG_GPIO)" >> $@
-	@echo "	#define DEBUG_LBT		$(DEBUG_LBT)" >> $@
-	@echo "	#define DEBUG_RAD		$(DEBUG_RAD)" >> $@
-	@echo "	#define DEBUG_CAL		$(DEBUG_CAL)" >> $@
-	@echo "	#define DEBUG_SX1302	$(DEBUG_SX1302)" >> $@
-	@echo "	#define DEBUG_FTIME		$(DEBUG_FTIME)" >> $@
+	$(ECHO) "\n#define DEBUG_AUX		$(DEBUG_AUX)" >> $@
+	$(ECHO) "#define DEBUG_COM		$(DEBUG_COM)" >> $@
+	$(ECHO) "#define DEBUG_MCU		$(DEBUG_MCU)" >> $@
+	$(ECHO) "#define DEBUG_I2C		$(DEBUG_I2C)" >> $@
+	$(ECHO) "#define DEBUG_REG		$(DEBUG_REG)" >> $@
+	$(ECHO) "#define DEBUG_HAL		$(DEBUG_HAL)" >> $@
+	$(ECHO) "#define DEBUG_GPS		$(DEBUG_GPS)" >> $@
+	$(ECHO) "#define DEBUG_GPIO		$(DEBUG_GPIO)" >> $@
+	$(ECHO) "#define DEBUG_LBT		$(DEBUG_LBT)" >> $@
+	$(ECHO) "#define DEBUG_RAD		$(DEBUG_RAD)" >> $@
+	$(ECHO) "#define DEBUG_CAL		$(DEBUG_CAL)" >> $@
+	$(ECHO) "#define DEBUG_SX1302	$(DEBUG_SX1302)" >> $@
+	$(ECHO) "#define DEBUG_FTIME		$(DEBUG_FTIME)" >> $@
 	# end of file
-	@echo "#endif" >> $@
-	@echo "*** Configuration seems ok ***"
+	$(ECHO) '\n\n#endif	/* !LORAGW_CONFIGURATION_H_ */' >> $@
+	$(ECHO) "*** Configuration seems ok ***"
+
 
 ### library module target
 
 $(OBJDIR):
-	mkdir -p $(OBJDIR)
+	$(MKDIR) -p $(OBJDIR)
 
 $(OBJDIR)/%.o: src/%.c $(INCLUDES) inc/config.h | $(OBJDIR)
 	$(CC) -c $(CFLAGS) $< -o $@
+
 
 ### static library
 
@@ -148,6 +173,7 @@ libloragw.a: $(OBJDIR)/loragw_spi.o \
 			 $(OBJDIR)/loragw_sx1302_rx.o \
 			 $(OBJDIR)/loragw_ad5338r.o
 	$(AR) rcs $@ $^
+
 
 ### test programs
 
@@ -190,4 +216,3 @@ test_loragw_toa: tst/test_loragw_toa.c libloragw.a
 test_loragw_sx1261_rssi: tst/test_loragw_sx1261_rssi.c libloragw.a
 	$(CC) $(CFLAGS) -L. -L../libtools  $< -o $@ $(LIBS)
 
-### EOF

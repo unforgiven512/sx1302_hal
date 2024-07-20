@@ -12,6 +12,7 @@ APP_NAME := lora_pkt_fwd
 
 LGW_PATH ?= ../libloragw
 LIB_PATH ?= ../libtools
+
 ARCH ?=
 CROSS_COMPILE ?=
 
@@ -27,11 +28,24 @@ RELEASE_VERSION := `cat ../VERSION`
 
 ### Constant symbols
 
-CC ?= $(CROSS_COMPILE)gcc
+CC  ?= $(CROSS_COMPILE)gcc
 CXX ?= $(CROSS_COMPILE)g++
-AR := $(CROSS_COMPILE)ar
+AR  := $(CROSS_COMPILE)ar
 
-CFLAGS := -O2 -Wall -Wextra -std=c99 -Iinc -I. -I../libtools/inc
+OPTLVL ?= 2
+DBGLVL ?= 0
+CSTD   ?= gnu11
+CXXSTD ?= gnu++14
+
+
+INCDIRS := -Iinc -I. -I../libtools/inc
+
+DEFINES :=
+PROJECT_DEFINES ?=
+
+CFLAGS := -O$(OPTLVL) -g$(DBGLVL) -Wall -Wextra -std=$(CSTD) $(DEFINES) $(PROJECT_DEFINES) $(INCDIRS)
+CXXFLAGS := -O$(OPTLVL) -g$(DBGLVL) -Wall -Wextra -std=$(CXXSTD) $(DEFINES) $(PROJECT_DEFINES) $(INCDIRS)
+
 VFLAG := -D VERSION_STRING="\"$(RELEASE_VERSION)\""
 
 
@@ -40,8 +54,8 @@ VFLAG := -D VERSION_STRING="\"$(RELEASE_VERSION)\""
 
 LGW_INC =
 ifneq ($(wildcard $(LGW_PATH)/inc/config.h),)
-  # only for HAL version 1.3 and beyond
-  LGW_INC += $(LGW_PATH)/inc/config.h
+	# only for HAL version 1.3 and beyond
+	LGW_INC += $(LGW_PATH)/inc/config.h
 endif
 LGW_INC += $(LGW_PATH)/inc/loragw_hal.h
 
@@ -83,14 +97,16 @@ else
 endif
 
 install-local:
-	install -d $(TARGET_DIR)
-	install -m 755 lora_pkt_fwd $(TARGET_DIR)
+	install -d $(LOCAL_TARGET_DIR)
+	install -m 755 lora_pkt_fwd $(LOCAL_TARGET_DIR)
 
 install-local-conf:
-	install -d $(TARGET_DIR)
-	install -m 644 global_conf.json.sx1250.* $(TARGET_DIR)
-	install -m 644 global_conf.json.sx1255.* $(TARGET_DIR)
-	install -m 644 global_conf.json.sx1257.* $(TARGET_DIR)
+	install -d $(LOCAL_CONFIG_DIR)
+	install -m 644 global_conf.json.sx1250.* $(LOCAL_CONFIG_DIR)
+	install -m 644 global_conf.json.sx1255.* $(LOCAL_CONFIG_DIR)
+	install -m 644 global_conf.json.sx1257.* $(LOCAL_CONFIG_DIR)
+	@ln -sf $(LOCAL_CONFIG_DIR)/global_conf.json $(LOCAL_TARGET_DIR)/global_conf.json
+
 
 ### Sub-modules compilation
 

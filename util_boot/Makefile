@@ -6,29 +6,44 @@ include ../target.cfg
 
 ARCH ?=
 CROSS_COMPILE ?=
-BUILD_MODE := release
+BUILD_MODE ?= release
 OBJDIR = obj
 
 ### ----- AVOID MODIFICATIONS BELLOW ------ AVOID MODIFICATIONS BELLOW ----- ###
 
 ifeq '$(BUILD_MODE)' 'alpha'
   $(warning /\/\/\/ Building in 'alpha' mode \/\/\/\)
-  WARN_CFLAGS   :=
-  OPT_CFLAGS    := -O0
-  DEBUG_CFLAGS  := -g
-  LDFLAGS       :=
+  WARN_CFLAGS    :=
+  WARN_CXXFLAGS  :=
+  OPT_CFLAGS     := -O0
+  OPTLVL         := 0
+  DEBUG_CFLAGS   := -g
+  DBGLVL         :=
+  EXTRA_CFLAGS   :=
+  EXTRA_CXXFLAGS :=
+  LDFLAGS        :=
 else ifeq '$(BUILD_MODE)' 'debug'
   $(warning /\/\/\/  Building in 'debug' mode \/\/\/\)
-  WARN_CFLAGS   := -Wall -Wextra
-  OPT_CFLAGS    := -O2
-  DEBUG_CFLAGS  := -g
-  LDFLAGS       :=
+  WARN_CFLAGS    := -Wall -Wextra
+  WARN_CXXFLAGS  := -Wall -Wextra
+  OPT_CFLAGS     := -O2
+  OPTLVL         := 2
+  DEBUG_CFLAGS   := -g
+  DBGLVL         :=
+  EXTRA_CFLAGS   :=
+  EXTRA_CXXFLAGS :=
+  LDFLAGS        :=
 else ifeq  '$(BUILD_MODE)' 'release'
   $(warning /\/\/\/  Building in 'release' mode \/\/\/\)
-  WARN_CFLAGS   := -Wall -Wextra
-  OPT_CFLAGS    := -O2 -ffunction-sections -fdata-sections
-  DEBUG_CFLAGS  :=
-  LDFLAGS       := -Wl,--gc-sections
+  WARN_CFLAGS    := -Wall -Wextra
+  WARN_CXXFLAGS  := -Wall -Wextra
+  OPT_CFLAGS     := -O2 -ffunction-sections -fdata-sections
+  OPTLVL         := 2
+  DEBUG_CFLAGS   :=
+  DBGLVL         :=
+  EXTRA_CFLAGS   := -ffunction-sections -fdata-sections
+  EXTRA_CXXFLAGS := -ffunction-sections -fdata-sections
+  LDFLAGS        := -Wl,--gc-sections
 else
   $(error BUILD_MODE must be set to either 'alpha', 'debug' or 'release')
 endif
@@ -41,7 +56,16 @@ APP_LIBS := -lloragw -lm -ltinymt32 -lrt
 LIB_PATH := ../libloragw
 
 ### Expand build options
-CFLAGS := -std=c99 $(WARN_CFLAGS) $(OPT_CFLAGS) $(DEBUG_CFLAGS)
+
+CSTD   ?= gnu11
+CXXSTD ?= gnu++14
+
+DEFINES :=
+PROJECT_DEFINES ?=
+
+CFLAGS := -O$(OPTLVL) -g$(DBGLVL) $(WARN_CFLAGS) -std=$(CSTD) $(EXTRA_CFLAGS) $(DEFINES) $(PROJECT_DEFINES)
+CXXFLAGS := -O$(OPTLVL) -g$(DBGLVL) $(WARN_CXXFLAGS) -std=$(CXXSTD) $(EXTRA_CXXFLAGS) $(DEFINES) $(PROJECT_DEFINES)
+
 CC ?= $(CROSS_COMPILE)gcc
 CXX ?= $(CROSS_COMPILE)g++
 AR ?= $(CROSS_COMPILE)ar
@@ -71,8 +95,8 @@ else
 endif
 
 install-local:
-	install -d $(TARGET_DIR)
-	install -m 755 boot $(TARGET_DIR)
+	install -d $(LOCAL_TARGET_DIR)
+	install -m 755 boot $(LOCAL_TARGET_DIR)
 
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
@@ -85,4 +109,3 @@ $(OBJDIR)/$(APP_NAME).o: src/$(APP_NAME).c | $(OBJDIR)
 $(APP_NAME): $(OBJDIR)/$(APP_NAME).o $(LIB_PATH)/libloragw.a
 	$(CC) -L$(LIB_PATH) -L../libtools $^ -o $@ $(LDFLAGS) $(APP_LIBS)
 
-### EOF

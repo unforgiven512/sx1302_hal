@@ -1,0 +1,19 @@
+[Unit]
+Description=LoRa Packet Forwarder
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=@@TARGET_DIR@@
+ExecStart=@@TARGET_DIR@@/lora_pkt_fwd -c @@CONFIG_DIR@@/global_conf.json
+Restart=always
+RestartSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=lora_pkt_fwd
+SyslogFacility=daemon
+SyslogLevel=info
+
+[Install]
+WantedBy=multi-user.target

@@ -8,7 +8,20 @@ CC ?= $(CROSS_COMPILE)gcc
 CXX ?= $(CROSS_COMPILE)g++
 AR := $(CROSS_COMPILE)ar
 
-CFLAGS := -O2 -Wall -Wextra -std=c99 -Iinc -I.
+OPTLVL ?= 2
+DBGLVL ?= 0
+CSTD   ?= gnu11
+CXXSTD ?= gnu++14
+
+
+INCDIRS := -Iinc -I.
+
+DEFINES :=
+PROJECT_DEFINES ?=
+
+CFLAGS := -O$(OPTLVL) -g$(DBGLVL) -Wall -Wextra -std=$(CSTD) $(DEFINES) $(PROJECT_DEFINES) $(INCDIRS)
+CXXFLAGS := -O$(OPTLVL) -g$(DBGLVL) -Wall -Wextra -std=$(CXXSTD) $(DEFINES) $(PROJECT_DEFINES) $(INCDIRS)
+
 
 OBJDIR = obj
 INCLUDES = $(wildcard inc/*.h)

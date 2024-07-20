@@ -22,45 +22,39 @@ radio used to send and receive packets wirelessly using LoRa or FSK modulations.
 The library is composed of the following modules:
 
 1. abstraction layer
-  * loragw_hal
-  * loragw_reg
-  * loragw_aux
-  * loragw_cal
-  * loragw_lbt
-  * loragw_sx1302
-  * loragw_sx1302_rx
-  * loragw_sx1302_timestamp
-  * loragw_sx125x
-  * loragw_sx1250
-  * loragw_sx1261
-
-2. communication layer for sx1302
-  * loragw_com
-  * loragw_spi
-  * loragw_usb
-
-3. communication layer for sx1255/SX1257 radios
-  * sx125x_com
-  * sx125x_spi
-
-4. communication layer for sx1250 radios
-  * sx1250_com
-  * sx1250_spi
-  * sx1250_usb
-
-5. communication layer for STM32 MCU (USB)
-  * loragw_mcu
-
-6. communication layer for sx1261 radio (LBT / Spectral Scan)
-  * sx1261_com
-  * sx1261_spi
-  * sx1261_usb
-
+    * `loragw_hal`
+    * `loragw_reg`
+    * `loragw_aux`
+    * `loragw_cal`
+    * `loragw_lbt`
+    * `loragw_sx1302`
+    * `loragw_sx1302_rx`
+    * `loragw_sx1302_timestamp`
+    * `loragw_sx125x`
+    * `loragw_sx1250`
+    * `loragw_sx1261`
+2. communication layer for **SX1302/SX1303**
+    * `loragw_com`
+    * `loragw_spi`
+    * `loragw_usb`
+3. communication layer for **SX1255/SX1257** radios
+    * `sx125x_com`
+    * `sx125x_spi`
+4. communication layer for **SX1250** radios
+    * `sx1250_com`
+    * `sx1250_spi`
+    * `sx1250_usb`
+5. communication layer for **STM32** MCU _(USB)_
+    * `loragw_mcu`
+6. communication layer for **SX1261** radio _(LBT / Spectral Scan)_
+    * `sx1261_com`
+    * `sx1261_spi`
+    * `sx1261_usb`
 7. peripherals
-  * loragw_i2c
-  * loragw_gps
-  * loragw_stts751
-  * loragw_ad5338r
+    * `loragw_i2c`
+    * `loragw_gps`
+    * `loragw_stts751`
+    * `loragw_ad5338r`
 
 The library also contains basic test programs to demonstrate code use and check
 functionality.
@@ -70,24 +64,24 @@ functionality.
 This is the main module and contains the high level functions to configure and
 use the LoRa concentrator:
 
-* lgw_board_setconf, to set the configuration of the concentrator
-* lgw_rxrf_setconf, to set the configuration of the radio channels
-* lgw_rxif_setconf, to set the configuration of the IF+modem channels
-* lgw_txgain_setconf, to set the configuration of the concentrator gain table
-* lgw_start, to apply the set configuration to the hardware and start it
-* lgw_stop, to stop the hardware
-* lgw_receive, to fetch packets if any was received
-* lgw_send, to send a single packet (non-blocking, see warning in usage section)
-* lgw_status, to check when a packet has effectively been sent
-* lgw_get_trigcnt, to get the value of the sx1302 internal counter at last PPS
-* lgw_get_instcnt, to get the value of the sx1302 internal counter
-* lgw_get_eui, to get the sx1302 chip EUI
-* lgw_get_temperature, to get the current temperature
-* lgw_time_on_air, to get the Time On Air of a packet
-* lgw_spectral_scan_start, to start scaning a particular channel
-* lgw_spectral_scan_get_status, to get the status of the current scan
-* lgw_spectral_scan_get_results, to get the results of the completed scan
-* lgw_spectral_scan_abort, to abort curretn scan
+* `lgw_board_setconf`, to set the configuration of the concentrator
+* `lgw_rxrf_setconf`, to set the configuration of the radio channels
+* `lgw_rxif_setconf`, to set the configuration of the IF+modem channels
+* `lgw_txgain_setconf`, to set the configuration of the concentrator gain table
+* `lgw_start`, to apply the set configuration to the hardware and start it
+* `lgw_stop`, to stop the hardware
+* `lgw_receive`, to fetch packets if any was received
+* `lgw_send`, to send a single packet (non-blocking, see warning in usage section)
+* `lgw_status`, to check when a packet has effectively been sent
+* `lgw_get_trigcnt`, to get the value of the sx1302 internal counter at last PPS
+* `lgw_get_instcnt`, to get the value of the sx1302 internal counter
+* `lgw_get_eui`, to get the sx1302 chip EUI
+* `lgw_get_temperature`, to get the current temperature
+* `lgw_time_on_air`, to get the Time On Air of a packet
+* `lgw_spectral_scan_start`, to start scaning a particular channel
+* `lgw_spectral_scan_get_status`, to get the status of the current scan
+* `lgw_spectral_scan_get_results`, to get the results of the completed scan
+* `lgw_spectral_scan_abort`, to abort curretn scan
 
 For an standard application, include only this module.
 The use of this module is detailed on the usage section.
@@ -215,8 +209,8 @@ also be converted to/from UTC time using lgw_cnt2utc/lgw_utc2cnt functions.
 
 ### 2.6. loragw_sx125x
 
-This module contains functions to handle the configuration of SX1255 and
-SX1257 radios. In order to communicate with the radio, it relies on the
+This module contains functions to handle the configuration of **SX1255** and
+**SX1257** radios. In order to communicate with the radio, it relies on the
 following modules:
 
 * sx125x_com : abstract interfacing to select USB or SPI interface
@@ -224,7 +218,7 @@ following modules:
 
 ### 2.7. loragw_sx1250
 
-This module contains functions to handle the configuration of SX1250 radios. In
+This module contains functions to handle the configuration of **SX1250** radios. In
 order to communicate with the radio, it relies on the following modules:
 
 * sx1250_com : abstract interfacing to select USB or SPI interface
@@ -233,7 +227,7 @@ order to communicate with the radio, it relies on the following modules:
 
 ### 2.8. loragw_sx1302
 
-This module contains functions to abstract SX1302 concentrator capabilities.
+This module contains functions to abstract **SX1302/SX1303** concentrator capabilities.
 
 ### 2.9. loragw_sx1302_rx
 
@@ -243,7 +237,7 @@ the RX buffer of the SX1302.
 ### 2.10. loragw_sx1302_timestamp
 
 This module is a sub-module of the loragw_sx1302 module focusing on abstracting
-the timestamp counter of the SX1302.
+the timestamp counter of the **SX1302/SX1303**.
 It converts the 32-bits 32MHz internal counter of the SX1302 to a 32-bits 1MHz
 counter.
 This module needs to be called regularly by upper layers to maintain counter
@@ -253,22 +247,22 @@ into account the LoRa demodulation processing time.
 
 ### 2.11. loragw_stts751
 
-This module contains a very basic driver for the STmicroelectronics ST751
+This module contains a very basic driver for the STmicroelectronics **STTS751**
 temperature sensor which is on the CoreCell reference design.
 
 ### 2.12. loragw_ad5338r
 
-This module contains a very basic driver for the Analog Devices AD5338R DAC used
+This module contains a very basic driver for the Analog Devices **AD5338R** DAC used
 on the Semtech CN490 Full Duplex reference design to set the PA fixed gain.
 
 ### 2.13. loragw_i2c
 
 This module provides basic function to communicate with I2C devices on the board.
-It is used in this project for accessing the temperature sensor, the AD5338R DAC...
+It is used in this project for accessing the temperature sensor, the **AD5338R** DAC...
 
 ### 2.14. loragw_sx1261
 
-This module contains functions to handle the configuration of SX1261 radio for
+This module contains functions to handle the configuration of **SX1261** radio for
 Listen-Before-Talk or Spectral Scan functionnalities. In order to communicate
 with the radio, it relies on the following modules:
 
@@ -411,7 +405,7 @@ also be available.
 
 ### 4.3. Additionnal SX1261 radio
 
-In order to perform Listen-Before-Talk and/or Spectral Scan, an additional SX1261
+In order to perform Listen-Before-Talk and/or Spectral Scan, an additional **SX1261**
 radio is required. Its internal firmware also needs to be patched (patch RAM) to
 support those particular features.
 
@@ -421,14 +415,14 @@ support those particular features.
 
 For a typical application you need to:
 
-* include loragw_hal.h in your program source
-* link to the libloragw.a static library during compilation
-* link to the librt library due to loragw_aux dependencies (timing functions)
+* include `loragw_hal.h` in your program source
+* link to the `libloragw.a` static library during compilation
+* link to the `librt` library due to `loragw_aux` dependencies _(timing functions)_
 
 For an application that will also access the concentrator configuration
 registers directly (eg. for advanced configuration) you also need to:
 
-* include loragw_reg.h in your program source
+* include `loragw_reg.h` in your program source
 
 ### 5.2. Using the software API
 
@@ -437,9 +431,9 @@ To use the HAL in your application, you must follow some basic rules:
 * configure the radios path and IF+modem path before starting the radio
 * the configuration is only transferred to hardware when you call the *start*
   function
-* you cannot receive packets until one (or +) radio is enabled AND one (or +)
-  IF+modem part is enabled AND the concentrator is started
-* you cannot send packets until one (or +) radio is enabled AND the concentrator
+* you cannot receive packets until one (or +) radio is enabled **AND** one (or +)
+  IF+modem part is enabled **AND** the concentrator is started
+* you cannot send packets until one (or +) radio is enabled **AND** the concentrator
   is started
 * you must stop the concentrator before changing the configuration
 
@@ -454,34 +448,34 @@ A typical application flow for using the HAL is the following:
 	}
 	<stop the concentrator>
 
-**/!\ Warning** The lgw_send function is non-blocking and returns while the
+**/!\ Warning** The `lgw_send` function is non-blocking and returns while the
 LoRa concentrator is still sending the packet, or even before the packet has
 started to be transmitted if the packet is triggered on a future event.
-While a packet is emitted, no packet can be received (limitation intrinsic to
-most radio frequency systems).
+While a packet is emitted, no packet can be received _(limitation intrinsic to
+most radio frequency systems)_.
 
-Your application *must* take into account the time it takes to send a packet or
-check the status (using lgw_status) before attempting to send another packet.
+Your application **must** take into account the time it takes to send a packet or
+check the status _(using `lgw_status`)_ before attempting to send another packet.
 
 Trying to send a packet while the previous packet has not finished being send
 will result in the previous packet not being sent or being sent only partially
-(resulting in a CRC error in the receiver).
+_(resulting in a CRC error in the receiver)_.
 
 ### 5.3. Debugging mode
 
-To debug your application, it might help to compile the loragw_hal function
-with the debug messages activated (set DEBUG_HAL=1 in library.cfg).
-It then send a lot of details, including detailed error messages to *stderr*.
+To debug your application, it might help to compile the `loragw_hal` function
+with the debug messages activated _(set `DEBUG_HAL=1` in `library.cfg`)_.
+It then send a lot of details, including detailed error messages to `stderr`.
 
 ## 6. Notes
 
 ### 6.1. Spreading factor SF5 & SF6
 
-The sx1302 supports SF5 and SF6 spreading factors, and the HAL also. But it is
-important to note that the only syncword supported for SF5 and SF6 is 0x12
-(also known as "private").
+The **sx1302** supports **SF5** and **SF6** spreading factors, and the HAL also. But it is
+important to note that the only syncword supported for **SF5** and **SF6** is `0x12`
+_(also known as "private")_.
 
-This is true whatever how of the "lorawan_public" field of lgw_conf_board_s is
+This is true whatever how of the "lorawan_public" field of `lgw_conf_board_s` is
 set.
 
 ## 7. License

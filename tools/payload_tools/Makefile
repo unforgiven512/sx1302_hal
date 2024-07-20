@@ -7,11 +7,24 @@ include ../../target.cfg
 
 ARCH ?=
 CROSS_COMPILE ?=
+
 CC ?= $(CROSS_COMPILE)gcc
 CXX ?= $(CROSS_COMPILE)g++
 AR ?= $(CROSS_COMPILE)ar
 
-CFLAGS := -O2 -Wall -Wextra -std=c99 -I. -I../../libtools/inc
+OPTLVL ?= 2
+DBGLVL ?= 0
+CSTD   ?= gnu11
+CXXSTD ?= gnu++14
+
+
+INCDIRS := -I. -I../../libtools/inc
+
+DEFINES :=
+PROJECT_DEFINES ?=
+
+CFLAGS := -O$(OPTLVL) -g$(DBGLVL) -Wall -Wextra -std=$(CSTD) $(DEFINES) $(PROJECT_DEFINES) $(INCDIRS)
+CXXFLAGS := -O$(OPTLVL) -g$(DBGLVL) -Wall -Wextra -std=$(CXXSTD) $(DEFINES) $(PROJECT_DEFINES) $(INCDIRS)
 
 
 ### linking options
@@ -47,8 +60,8 @@ else
 endif
 
 install-local:
-	install -d $(TARGET_DIR)
-	install -m 755 payload_diff payload_crc payload_gen $(TARGET_DIR)
+	install -d $(LOCAL_TARGET_DIR)
+	install -m 755 payload_diff payload_crc payload_gen $(LOCAL_TARGET_DIR)
 
 
 ### rules
@@ -67,5 +80,3 @@ payload_diff: payload_diff.o
 
 payload_gen: payload_gen.o
 	$(CC) $(CFLAGS) -L../../libtools -o $@ $^ $(LIBS)
-
-### EOF
